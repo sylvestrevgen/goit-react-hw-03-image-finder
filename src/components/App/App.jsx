@@ -165,7 +165,7 @@ export default class App extends Component {
         {isError && (
           <ErrorText>Something went wrong! Please try later!</ErrorText>
         )}
-        {isLoading && (
+        {isLoading ? (
           <Loader
             type="Oval"
             color="#00BFFF"
@@ -173,8 +173,7 @@ export default class App extends Component {
             width={100}
             style={loaderStyles}
           />
-        )}
-        {images.length > 0 && (
+        ) : (
           <>
             <Gallery images={images} onOpenModal={this.handleOpenModal} />
             <LoadButton onClick={this.handleLoadMore}>Load more</LoadButton>
