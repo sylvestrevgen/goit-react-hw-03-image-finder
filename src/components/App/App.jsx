@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, createRef } from 'react';
 import styled from 'styled-components';
 import Loader from 'react-loader-spinner';
 import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
@@ -41,6 +41,8 @@ const ErrorText = styled.p`
 `;
 
 export default class App extends Component {
+  appRef = createRef();
+
   state = {
     images: [],
     currentPage: 1,
@@ -71,7 +73,11 @@ export default class App extends Component {
       });
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  getSnapshotBeforeUpdate = () => {
+    return this.appRef.current.scrollHeight;
+  };
+
+  componentDidUpdate(prevProps, prevState, snapshot) {
     const { currentPage, searchQuery } = this.state;
 
     if (prevState.searchQuery !== searchQuery) {
@@ -105,7 +111,10 @@ export default class App extends Component {
           }));
         })
         .finally(() => {
-          window.scrollBy({ top: 550, behavior: 'smooth' });
+          window.scrollTo({
+            top: snapshot - 60,
+            behavior: 'smooth',
+          });
         });
     }
   }
@@ -160,7 +169,7 @@ export default class App extends Component {
     const checkedImage = images.find(image => image.id === checkedImageId);
 
     return (
-      <div className={styles.app}>
+      <div className={styles.app} ref={this.appRef}>
         <SearchForm onSearchSubmit={this.handleSearchSubmit} />
         {isError && (
           <ErrorText>Something went wrong! Please try later!</ErrorText>
